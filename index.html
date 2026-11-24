@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Loan | Customer Demo</title>
+<style>
+:root {
+  --navy:#101c35;
+  --blue:#2563eb;
+  --bg:#f3f6fc;
+  --muted:#718096;
+  --green:#15976b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Inter,Arial,sans-serif;color:#17243b}
+header{background:var(--navy);color:white;padding:20px 5%;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:23px;font-weight:800;letter-spacing:1px}
+.logo span{color:#60a5fa}
+.demo{background:#194e3c;color:#8af0c0;padding:7px 12px;border-radius:20px;font-size:12px}
+.layout{display:flex;min-height:calc(100vh - 70px)}
+nav{width:220px;background:white;padding:24px 14px;border-right:1px solid #e5eaf2}
+nav button{display:block;width:100%;border:0;background:none;text-align:left;padding:14px;border-radius:9px;margin-bottom:7px;color:#526079;cursor:pointer;font-size:14px}
+nav button.active,nav button:hover{background:#eaf1ff;color:var(--blue);font-weight:bold}
+main{flex:1;padding:30px;max-width:1400px;margin:auto;width:100%}
+h1{margin:0 0 7px;font-size:27px}
+.subtitle{color:var(--muted);font-size:14px;margin-bottom:25px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:25px}
+.card{background:white;border:1px solid #e8edf5;border-radius:13px;padding:20px;box-shadow:0 3px 12px #14213b08}
+.card small{color:var(--muted)}
+.card h2{margin:12px 0 3px;font-size:25px}
+.blue{color:var(--blue)}.green{color:var(--green)}
+.section{display:none}.section.active{display:block}
+.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:18px 0;flex-wrap:wrap}
+input,select{padding:11px;border:1px solid #dce3ee;border-radius:8px;font-size:14px;max-width:100%}
+.search{width:260px}
+button.action{background:var(--blue);color:white;border:0;border-radius:8px;padding:11px 16px;cursor:pointer;font-weight:600}
+button.secondary{background:#eaf0fa;color:#304361;border:0;border-radius:8px;padding:10px 14px;cursor:pointer}
+button.danger{background:#fff0f0;color:#bd3333;border:0;border-radius:8px;padding:10px 14px;cursor:pointer}
+table{width:100%;border-collapse:collapse;min-width:650px}
+.table-wrap{overflow-x:auto;background:white;border-radius:12px;border:1px solid #e8edf5}
+th,td{text-align:left;padding:15px;border-bottom:1px solid #edf0f5;font-size:13px}
+th{color:#718096;background:#fafbfd}
+td{color:#29374f}
+.status{padding:5px 9px;border-radius:20px;background:#e6f7ef;color:#13845d;font-size:11px}
+.badge{padding:5px 9px;border-radius:20px;background:#edf2ff;color:#315dc0;font-size:11px}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.actions button{border:0;background:#edf2ff;color:#2855a5;padding:7px;border-radius:6px;cursor:pointer}
+.notice{background:#eaf2ff;color:#31528d;padding:14px;border-radius:9px;font-size:12px;margin-top:20px}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+footer{text-align:center;padding:20px;color:#8290a4;font-size:12px}
+#modal{display:none;position:fixed;inset:0;background:#101c3580;z-index:10;align-items:center;justify-content:center;padding:15px}
+.modal-box{background:white;padding:25px;border-radius:14px;width:100%;max-width:430px}
+.modal-box h2{margin-top:0}
+.modal-box input,.modal-box select{width:100%;margin:7px 0 13px}
+.modal-box label{font-size:12px;color:#53617a}
+.modal-buttons{display:flex;gap:10px;justify-content:flex-end}
+@media(max-width:850px){
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .layout{display:block}
+ nav{width:100%;display:flex;overflow-x:auto;padding:10px;border-bottom:1px solid #eee}
+ nav button{white-space:nowrap;width:auto;margin:0 3px;padding:12px}
+ main{padding:20px 13px}
+}
+@media(max-width:450px){
+ .stats{grid-template-columns:1fr 1fr;gap:9px}
+ .card{padding:14px}
+ .card h2{font-size:19px}
+ h1{font-size:23px}
+ .search{width:100%}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">FREE <span>LOAN</span></div>
+  <div class="demo">● DEMO VERSION</div>
+</header>
+
+<div class="layout">
+<nav>
+  <button class="active" onclick="show('dashboard',this)">▦ Dashboard</button>
+  <button onclick="show('customers',this)">♙ Customers</button>
+  <button onclick="show('loans',this)">▤ Loans</button>
+  <button onclick="show('payments',this)">₹ Collections</button>
+</nav>
+
+<main>
+<section id="dashboard" class="section active">
+  <h1>Dashboard</h1>
+  <div class="subtitle">Welcome to Free Loan Management Demo</div>
+
+  <div class="stats">
+    <div class="card"><small>Total Customers</small><h2 id="customerCount">0</h2></div>
+    <div class="card"><small>Active Loans</small><h2 id="loanCount">0</h2></div>
+    <div class="card"><small>Outstanding</small><h2 class="blue" id="outstanding">₹0</h2></div>
+    <div class="card"><small>Collected</small><h2 class="green" id="collected">₹0</h2></div>
+  </div>
+
+  <div class="card">
+    <h3>Recent Collections</h3>
+    <div id="recent"></div>
+  </div>
+  <div class="notice">Demo mode: All records are fictional examples. This website does not process real payments or provide loans.</div>
+</section>
+
+<section id="customers" class="section">
+  <h1>Customers</h1>
+  <div class="subtitle">Manage demonstration customer records.</div>
+  <div class="toolbar">
+    <input class="search" id="customerSearch" placeholder="Search customer..." oninput="render()">
+    <button class="action" onclick="addCustomer()">+ Add Customer</button>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Customer</th><th>Mobile</th><th>Customer ID</th><th>Action</th></tr></thead>
+    <tbody id="customerRows"></tbody>
+  </table></div>
+</section>
+
+<section id="loans" class="section">
+  <h1>Loan Records</h1>
+  <div class="subtitle">View daily and monthly demonstration schedules.</div>
+  <div class="toolbar">
+    <input class="search" id="loanSearch" placeholder="Search loans..." oninput="render()">
+    <button class="action" onclick="addLoan()">+ Add Loan</button>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Loan ID</th><th>Customer</th><th>Principal</th><th>Balance</th><th>Schedule</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody id="loanRows"></tbody>
+  </table></div>
+</section>
+
+<section id="payments" class="section">
+  <h1>Collections</h1>
+  <div class="subtitle">Demonstration payment history.</div>
+  <div class="toolbar">
+    <button class="action" onclick="addPayment()">+ Record Sample Payment</button>
+  </div>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Receipt ID</th><th>Customer</th><th>Loan ID</th><th>Amount</th><th>Date</th><th>Action</th></tr></thead>
+    <tbody id="paymentRows"></tbody>
+  </table></div>
+</section>
+</main>
+</div>
+
+<footer>
+  FREE LOAN · CUSTOMER MANAGEMENT DEMO · FICTIONAL DATA ONLY
+  <br><br>
+  <button class="secondary" onclick="resetDemo()">Reset Demo Data</button>
+</footer>
+
+<div id="modal">
+  <div class="modal-box">
+    <h2 id="modalTitle">Add Record</h2>
+    <div id="modalContent"></div>
+    <div class="modal-buttons">
+      <button class="secondary" onclick="closeModal()">Cancel</button>
+      <button class="action" id="saveButton">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const initial = {
+ customers:[
+  {id:'FL001',name:'Demo Customer 001',phone:'9000000001'},
+  {id:'FL002',name:'Demo Customer 002',phone:'9000000002'},
+  {id:'FL003',name:'Demo Customer 003',phone:'9000000003'}
+ ],
+ loans:[
+  {id:'LN001',customer:'FL001',principal:10000,total:11000,balance:8000,type:'Monthly'},
+  {id:'LN002',customer:'FL002',principal:5000,total:5500,balance:4500,type:'Daily'},
+  {id:'LN003',customer:'FL003',principal:8000,total:8800,balance:6800,type:'Monthly'}
+ ],
+ payments:[
+  {id:'RC001',loan:'LN001',amount:3000,date:'2026-11-20'},
+  {id:'RC002',loan:'LN002',amount:1000,date:'2026-11-21'},
+  {id:'RC003',loan:'LN003',amount:2000,date:'2026-11-22'}
+ ]
+};
+
+let data;
+try {
+ data=JSON.parse(localStorage.getItem('freeLoanDemo')) || structuredClone(initial);
+} catch(e) { data=structuredClone(initial); }
+
+const money=n=>'₹'+Number(n).toLocaleString('en-IN');
+const customer=id=>data.customers.find(c=>c.id===id);
+const loan=id=>data.loans.find(l=>l.id===id);
+const save=()=>{localStorage.setItem('freeLoanDemo',JSON.stringify(data));render();};
+const nextId=(prefix,items)=>prefix+String(items.length+1).padStart(3,'0');
+
+function show(id,button){
+ document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+ button.classList.add('active');
+ render();
+}
+
+function render(){
+ document.getElementById('customerCount').textContent=data.customers.length;
+ document.getElementById('loanCount').textContent=data.loans.filter(l=>l.balance>0).length;
+ document.getElementById('outstanding').textContent=money(data.loans.reduce((s,l)=>s+l.balance,0));
+ document.getElementById('collected').textContent=money(data.payments.reduce((s,p)=>s+p.amount,0));
+
+ document.getElementById('customerRows').innerHTML=data.customers.filter(c=>
+ (c.name+c.phone+c.id).toLowerCase().includes((document.getElementById('customerSearch')?.value||'').toLowerCase())
+ ).map(c=>`<tr><td><b>${safe(c.name)}</b></td><td>${safe(c.phone)}</td><td>${c.id}</td><td>Customer</td></tr>`).join('')||'<tr><td colspan="4" class="empty">No customers found</td></tr>';
+
+ document.getElementById('loanRows').innerHTML=data.loans.filter(l=>
+ ((customer(l.customer)?.name||'')+l.id).toLowerCase().includes((document.getElementById('loanSearch')?.value||'').toLowerCase())
+ ).map(l=>`<tr>
+ <td>${l.id}</td><td>${safe(customer(l.customer)?.name||'Unknown')}</td>
+ <td>${money(l.principal)}</td><td><b>${money(l.balance)}</b></td>
+ <td><span class="badge">${l.type}</span></td>
+ <td><span class="status">${l.balance===0?'Completed':'Active'}</span></td>
+ <td><div class="actions"><button onclick="receipt('${l.id}')">Statement</button></div></td>
+ </tr>`).join('')||'<tr><td colspan="7" class="empty">No loans found</td></tr>';
+
+ document.getElementById('paymentRows').innerHTML=data.payments.slice().reverse().map(p=>{
+ let l=loan(p.loan);
+ return `<tr><td>${p.id}</td><td>${safe(customer(l?.customer)?.name||'Unknown')}</td>
+ <td>${p.loan}</td><td><b>${money(p.amount)}</b></td><td>${p.date}</td>
+ <td><button class="secondary" onclick="printReceipt('${p.id}')">Print</button></td></tr>`;
+ }).join('')||'<tr><td colspan="6" class="empty">No payments recorded</td></tr>';
+
+ document.getElementById('recent').innerHTML=data.payments.slice(-3).reverse().map(p=>
+ `<p>${safe(customer(loan(p.loan)?.customer)?.name||'Unknown')} — <b>${money(p.amount)}</b> <small>${p.date}</small></p>`
+ ).join('')||'<p class="empty">No collections yet</p>';
+}
+
+function safe(value){
+ return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function openModal(title,fields,callback){
+ document.getElementById('modalTitle').textContent=title;
+ document.getElementById('modalContent').innerHTML=fields;
+ document.getElementById('saveButton').onclick=()=>{
+  const values={};
+  document.querySelectorAll('#modalContent [name]').forEach(e=>values[e.name]=e.value);
+  callback(values);
+ };
+ document.getElementById('modal').style.display='flex';
+}
+function closeModal(){document.getElementById('modal').style.display='none';}
+
+function addCustomer(){
+ openModal('Add Demo Customer',
+ `<label>Customer name</label><input name="name" required placeholder="Demo Customer 004">
+ <label>Mobile number (fictional)</label><input name="phone" required placeholder="9000000004" maxlength="10">`,
+ v=>{
+  if(!v.name.trim()||!/^9\d{9}$/.test(v.phone)){alert('Enter a name and a fictional 10-digit mobile number beginning with 9.');return;}
+  if(data.customers.some(c=>c.phone===v.phone)){alert('Mobile number already exists.');return;}
+  data.customers.push({id:nextId('FL',data.customers),name:v.name.trim(),phone:v.phone});
+  closeModal();save();
+ });
+}
+
+function addLoan(){
+ if(!data.customers.length){alert('Add a demo customer first.');return;}
+ openModal('Create Demo Loan',
+ `<label>Customer</label><select name="customer">${data.customers.map(c=>`<option value="${c.id}">${safe(c.name)}</option>`).join('')}</select>
+ <label>Principal amount (₹)</label><input name="principal" type="number" min="1" required>
+ <label>Agreed total amount (₹, including any agreed charges)</label><input name="total" type="number" min="1" required>
+ <label>Schedule</label><select name="type"><option>Daily</option><option>Monthly</option></select>`,
+ v=>{
+  let p=Number(v.principal),t=Number(v.total);
+  if(p<=0||t<p||!Number.isFinite(p)||!Number.isFinite(t)){alert('Enter valid amounts. Total must not be below principal.');return;}
+  data.loans.push({id:nextId('LN',data.loans),customer:v.customer,principal:p,total:t,balance:t,type:v.type});
+  closeModal();save();
+ });
+}
+
+function addPayment(){
+ let active=data.loans.filter(l=>l.balance>0);
+ if(!active.length){alert('No active demo loans.');return;}
+ openModal('Record Sample Payment',
+ `<label>Loan</label><select name="loan">${active.map(l=>`<option value="${l.id}">${l.id} — ${safe(customer(l.customer)?.name||'Unknown')} (${money(l.balance)} remaining)</option>`).join('')}</select>
+ <label>Payment amount (₹)</label><input name="amount" type="number" min="1" required>
+ <label>Payment date</label><input name="date" type="date" value="${new Date().toISOString().slice(0,10)}" required>`,
+ v=>{
+  let l=loan(v.loan),a=Number(v.amount);
+  if(!l||a<=0||a>l.balance){alert('Payment must be greater than zero and cannot exceed the recorded balance.');return;}
+  l.balance-=a;
+  data.payments.push({id:nextId('RC',data.payments),loan:v.loan,amount:a,date:v.date});
+  closeModal();save();
+ });
+}
+
+function receipt(id){
+ let l=loan(id);
+ if(!l)return;
+ alert('DEMO LOAN STATEMENT\n'+id+'\nCustomer: '+customer(l.customer)?.name+
+ '\nPrincipal: '+money(l.principal)+'\nTotal recorded amount: '+money(l.total)+
+ '\nRemaining balance: '+money(l.balance)+'\n\nFor demonstration only.');
+}
+
+function printReceipt(id){
+ let p=data.payments.find(x=>x.id===id),l=loan(p?.loan);
+ if(!p||!l)return;
+ let w=window.open('','_blank');
+ if(!w){alert('Please allow popups to print demo receipts.');return;}
+ w.document.write(`<title>Demo Receipt ${p.id}</title><style>body{font:16px Arial;padding:35px;color:#17243b}h1{color:#2563eb}hr{border:0;border-top:1px solid #ddd;margin:20px 0}</style>
+ <h1>FREE LOAN</h1><h3>DEMO PAYMENT RECEIPT</h3><hr>
+ <p>Receipt ID: ${p.id}</p><p>Customer: ${safe(customer(l.customer)?.name||'Unknown')}</p>
+ <p>Loan ID: ${l.id}</p><p>Date: ${p.date}</p><h2>Sample payment: ${money(p.amount)}</h2>
+ <hr><p>Remaining recorded balance: ${money(l.balance)}</p>
+ <p>This is a fictional demonstration receipt. Not valid as proof of real payment.</p>`);
+ w.document.close();w.print();
+}
+
+function resetDemo(){
+ if(confirm('Reset all demo records to the original fictional sample data?')){
+  data=structuredClone(initial);save();
+ }
+}
+render();
+</script>
+</body>
+</html>
